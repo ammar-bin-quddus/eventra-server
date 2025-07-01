@@ -32,18 +32,27 @@ exports.getEvents = async (req, res) => {
 
 exports.joinEvent = async (req, res) => {
   const { id } = req.params;
+  const userEmail = req.user?.email;
 
   try {
     const event = await Event.findById(id);
-    if (!event) return res.status(404).json({ error: 'Event not found' });
+    if (!event) return res.status(404).json({ error: "Event not found" });
+
+    if (event.joinedUsers.includes(userEmail)) {
+      return res.status(400).json({ error: "You've already joined this event." });
+    }
 
     event.attendeeCount += 1;
+    event.joinedUsers.push(userEmail);
     await event.save();
-    res.json({ message: 'Joined event', event });
+
+    res.json({ message: "Joined event successfully", event });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to join event' });
+    console.error("Join error:", err);
+    res.status(500).json({ error: "Failed to join event" });
   }
 };
+
 
 exports.getMyEvents = async (req, res) => {
   try {

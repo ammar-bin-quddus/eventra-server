@@ -9,6 +9,7 @@ const eventSchema = new mongoose.Schema({
   description: String,
   attendeeCount: { type: Number, default: 0 },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  joinedUsers: [String],
 });
 
 module.exports = mongoose.model('Event', eventSchema);
